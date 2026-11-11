@@ -1,0 +1,22 @@
+[
+  {
+    "target_text": "我看着他们，意气风发地挺直了胸膛，轻笑道：我的魅力果然藏不住。",
+    "prompt_audio": "zh_01_prompt.wav",
+    "prompt_text": "对,这就是我万人敬仰的太乙真人"
+  },
+  {
+    "target_text": "顿时，气氛变得沉郁起来。但我知道不能放弃，必须冷静下来，重新开始。",
+    "prompt_audio": "zh_02_prompt.wav",
+    "prompt_text": "啊 事情怎么这么多啊明天又要开会了做不完啊说了你又不听听又不懂懂又不做做又做错"
+  },
+  {
+    "target_text": "I don't really care what you call me. Respect me and I'll nurture you.",
+    "prompt_audio": "en_01_prompt.wav",
+    "prompt_text": "some call me nature, others call me mother nature."
+  },
+  {
+    "target_text": "Your safety is at stake. Please consider returning with me.",
+    "prompt_audio": "en_03_prompt.wav",
+    "prompt_text": "You don't know how much trouble you've gotten yourself into? Look, if one of the others get to you first, they'll report you. Alpha Grant has a search out. And if they see you on human territory, they'll be shunned."
+  }
+]
