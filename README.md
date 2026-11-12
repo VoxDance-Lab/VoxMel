@@ -193,6 +193,8 @@ The checkpoint is available on Hugging Face: [VoxDance-Lab/VoxMel-0.6B](https://
 
 The 0.3B settings and parameter counts follow Table 3 of the paper: 246.5M backbone, 5.2M Coarse-Mel head, 30.2M temporal residual, 30.2M frequency residual, and 0.1M adapters.
 
+**Only VoxMel-0.6B underwent reinforcement learning post-training (frozen-head GRPO); VoxMel-0.3B did not undergo this post-training.**
+
 The 0.6B backbone is initialized from Qwen2.5-0.5B. Its parameter breakdown is 494.0M backbone, 14.8M Coarse-Mel head, 90.6M temporal tier, 90.6M frequency tier, and 0.1M adapters. The frozen Vocos vocoder adds 13.6M parameters and is excluded from the totals above.
 
 ---
