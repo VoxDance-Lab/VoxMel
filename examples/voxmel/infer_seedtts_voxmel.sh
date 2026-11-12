@@ -23,7 +23,7 @@ NPROC="${NPROC:-1}"
 MAX_ITEMS="${MAX_ITEMS:-0}"
 CFG_TEXT="${CFG_TEXT:-3.5}"
 CFG_SPK="${CFG_SPK:-3}"
-UP_STEPS="${UP_STEPS:-1}"
+UP_STEPS="${UP_STEPS:-32}"
 COARSE_STEPS="${COARSE_STEPS:-32}"
 
 extra_args=("++up_num_steps=${UP_STEPS}" "++coarse_steps=${COARSE_STEPS}")
