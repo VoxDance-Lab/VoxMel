@@ -185,22 +185,7 @@ python app.py \
 
 模型检查点已发布至 Hugging Face：[VoxDance-Lab/VoxMel-0.6B](https://huggingface.co/VoxDance-Lab/VoxMel-0.6B) 和 [VoxDance-Lab/VoxMel-0.3B](https://huggingface.co/VoxDance-Lab/VoxMel-0.3B)。下载模型文件后，按[准备模型文件](#prepare-model-files)配置本地推理。
 
-| 配置 | VoxMel-0.3B | VoxMel-0.6B |
-| --- | ---: | ---: |
-| 总参数量（不含声码器） | 312.2M | 690.1M |
-| 骨干层数 | 20 | 24 |
-| 骨干宽度 | 768 | 896 |
-| 骨干 FFN 宽度 | 1792 | 4864 |
-| 残差层宽度 | 640 | 1024 |
-| 每个残差层的块数 | 5 | 6 |
-| 流匹配预测头层数 | 5 | 6 |
-| 训练数据 | 10 万小时 | 10 万小时 |
-
-0.3B 模型的配置和参数量遵循论文表 3：骨干 246.5M、Coarse-Mel 预测头 5.2M、时间残差层 30.2M、频率残差层 30.2M、适配模块 0.1M。
-
 **只有 VoxMel-0.6B 进行了强化学习后训练；VoxMel-0.3B 未进行该后训练。**
-
-0.6B 模型的骨干由 Qwen2.5-0.5B 初始化。参数分布为：骨干 494.0M、Coarse-Mel 预测头 14.8M、时间残差层 90.6M、频率残差层 90.6M、适配模块 0.1M。冻结的 Vocos 声码器另有 13.6M 参数，不计入上述总量。
 
 ---
 
