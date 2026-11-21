@@ -1,7 +1,7 @@
-<h2 align="center">VoxMel: Wavelet-Factorized Autoregressive Mel-Spectrogram Modeling for Zero-Shot Speech Synthesis</h2>
+<h2 align="center">VoxMel：ゼロショット音声合成のためのウェーブレット分解に基づく自己回帰メルスペクトログラムモデリング</h2>
 
 <p align="center">
-  <a href="./README.md">English</a> | <a href="./README_zh.md">中文</a> | <b>日本語</b> | <a href="./README_kor.md">한국어</a>
+  <b>English</b> | <a href="./README_zh.md">中文</a> | <a href="./README_jap.md">日語</a> | <a href="./README_kor.md">한국어</a>
 </p>
 
 <p align="center">
@@ -12,55 +12,56 @@
   </picture>
 </p>
 
-
 <p align="center">
   📄 <a href="./assets/papers/VoxMel_Technical_Report.pdf">技術レポート</a> &nbsp;|&nbsp;
   🌐 <a href="https://voxdance.github.io/voxmel-demo">プロジェクトページ</a> &nbsp;|&nbsp;
-  💻 <a href="https://github.com/VoxDance-Lab/VoxMel">GitHub リポジトリ</a> &nbsp;|&nbsp;
-  🤗 <a href="https://huggingface.co/VoxDance-Lab/">Hugging Face モデル</a>
+  💻 <a href="https://github.com/VoxDance-Lab/VoxMel">GitHub</a> &nbsp;|&nbsp;
+  🤗 <a href="https://huggingface.co/VoxDance-Lab/">Hugging Face</a>
 </p>
 
-## 🔥 📰 最新情報
+
+
+## 🔥 📰 ニュース
 
 - **2026.11.16** — 技術レポートを公開しました！
 - **2026.11.12** — コードとモデルの重み（VoxMel-0.6B / VoxMel-0.3B）を公開しました！
 
 ---
-**VoxMel** は、固定かつ厳密に可逆な2軸 Haar 変換を用いてメルスペクトログラムを直接モデル化する、音響トークナイザー不要の連続自己回帰型テキスト音声合成（TTS）フレームワークです。言語モデルのバックボーンとフローマッチングヘッドが **Coarse-Mel** を自己回帰的に生成し、2つの非自己回帰残差層が時間・周波数の細部を復元します。残差は自己回帰の履歴に戻されません。独立した Vocos ボコーダーが復元されたメルスペクトログラムを波形に変換します。
 
-VoxMel は **Emilia の10万時間のデータ**で学習し、英語と中国語のゼロショット音声クローニングで評価しています。**0.6B** の教師ありモデルは Seed-TTS-eval test-en で **1.51% WER / 0.738 SIM** を達成し、ヘッドを凍結した GRPO により **1.15% WER / 0.753 SIM** に改善します。比較結果と評価プロトコルは[評価](#evaluation)をご覧ください。
+**VoxMel** は、固定かつ厳密に可逆な2軸 Haar 変換を通じてメルスペクトログラムを直接モデル化する、音響 tokenizer 不要の連続自己回帰型テキスト音声合成（TTS）フレームワークです。フローマッチングヘッドを備えた言語モデルのバックボーンが **Coarse-Mel** を自己回帰的に生成し、2つの非自己回帰残差階層が時間・周波数の詳細を復元します。これらの詳細は自己回帰の履歴には戻しません。独立した Vocos ボコーダが、復元されたメルスペクトログラムを音声に変換します。
 
-<a id="highlights"></a>
+VoxMel は **Emilia の100K時間のデータ**で学習し、英語と中国語のゼロショット音声クローニングで評価しています。**0.6B** の教師ありモデルは Seed-TTS-eval test-en で **1.51% WER / 0.738 SIM** を達成し、ヘッドを凍結した GRPO によって **1.15% WER / 0.753 SIM** に改善します。比較と評価手順は[評価](#-evaluation)をご覧ください。
 
-### ✨ 主な特徴
+### ✨ 特長
 
-- **メルの直接モデル化** — 学習済み音響トークナイザーや圧縮音響潜在空間は不要です。テキスト側には Qwen2.5 トークナイザーを使用します。
-- **厳密に可逆な分解** — 周波数軸と時間軸の Haar 分解はすべてのメル係数を保持します。可逆性は変換自体の性質であり、生成音声やボコーダーの復元が無損失であることを保証するものではありません。
-- **粗い成分のみを自己回帰生成** — Coarse-Mel、時間残差、周波数残差の順に生成します。残差の細部は自己回帰の履歴に入りません。
-- **英語・中国語のゼロショット音声クローニング** — 参照音声とその書き起こしから合成します。論文の設定では24 kHzで出力します。
+- **メルスペクトログラムの直接モデリング** — 学習済み音響 tokenizer や圧縮された音響潜在空間を使いません。テキストフロントエンドには Qwen2.5 tokenizer を使用します。
+- **厳密に可逆な分解** — 周波数・時間方向の Haar 分解ですべてのメル係数を保持します。厳密な可逆性は変換そのものに対する性質であり、生成音声やボコーダによる復元が無損失であることを保証するものではありません。
+- **粗い成分のみの自己回帰** — まず Coarse-Mel を生成し、依存順に時間残差と周波数残差を生成します。残差の詳細は自己回帰履歴に含めません。
+- **英語・中国語のゼロショットクローニング** — 参照音声とその書き起こしから音声を合成します。論文の設定では出力は 24 kHz です。
 
-- **事後学習** — ヘッドを凍結した GRPO により、Seed-TTS の4指標すべてが改善します。
+- **事後学習** — ヘッドを凍結した GRPO により、Seed-TTS-eval の4つの指標すべてが改善します。
 
 ---
-
-<a id="contents"></a>
 
 ## 目次
 
 - [性能](#performance)
-- [モデルアーキテクチャ](#model-architecture)
-- [クイックスタート](#quick-start)
+- [モデル構成](#model-architecture)
+- [クイックスタート](#-quick-start)
   - [インストール](#installation)
   - [モデルファイルの準備](#prepare-model-files)
   - [Python API](#python-api)
   - [CLI の使い方](#cli-usage)
   - [Web デモ](#web-demo)
-- [モデル](#models)
-- [手法](#method)
-- [評価](#evaluation)
+- [モデル](#-models)
+- [手法](#-method)
+- [評価](#-evaluation)
   - [Seed-TTS-eval の結果](#seed-tts-eval-results)
-  - [Seed-TTS バッチ評価](#seed-tts-batch-evaluation)
-- [ライセンス](#license)
+  - [Seed-TTS のバッチ評価](#seed-tts-batch-evaluation)
+- [ライセンス](#-license)
+- [🤝 コミュニティへの謝辞](#-community-acknowledgments)
+- [貢献機関](#-Contributors)
+- [引用](#-Citation)
 
 ---
 
@@ -68,19 +69,20 @@ VoxMel は **Emilia の10万時間のデータ**で学習し、英語と中国�
 
 ## 性能
 
-![Seed-TTS-eval：英語の WER・SIM と中国語の CER・SIM](assets/performance.svg)
+![Seed-TTS-eval：英語 WER・SIM、中国語 CER・SIM](assets/performance.svg)
 
-代表的なシステムとの Seed-TTS-eval 比較です。青は教師あり VoxMel-0.6B、水色は VoxMel-0.6B + GRPO です。全結果は[評価](#evaluation)をご覧ください。
+代表的なシステムとの Seed-TTS-eval での比較です。青：教師あり VoxMel-0.6B、シアン：VoxMel-0.6B + GRPO。表全体は[評価](#-evaluation)をご覧ください。
 
 <a id="model-architecture"></a>
 
-## モデルアーキテクチャ
+## モデル構成
 
-![VoxMel の構成：Coarse-Mel の自己回帰生成と、時間・周波数の非自己回帰残差層](assets/architecture.png)
+![VoxMel の構成：Coarse-Mel の自己回帰と非自己回帰の時間・周波数残差階層](assets/architecture.png)
+
 
 ---
 
-<a id="quick-start"></a>
+<a id="-quick-start"></a>
 
 ## 🚀 クイックスタート
 
@@ -88,19 +90,19 @@ VoxMel は **Emilia の10万時間のデータ**で学習し、英語と中国�
 
 ### インストール
 
-Python 3.10–3.12 を使用してください。ハードウェアに合った互換性のある PyTorch と torchaudio をインストールし（元の環境は torch/torchaudio 2.4.1、CUDA 12.1）、リポジトリのルートから実行します。
+Python 3.10–3.12 を使用してください。ハードウェアに適合し、互いに対応する PyTorch と torchaudio をインストールしてください（元の環境は torch/torchaudio 2.4.1 と CUDA 12.1）。その後、リポジトリのルートでインストールします。
 
 ```bash
 pip install -e .
 ```
 
-パッケージのインストーラーは `requirements.txt` を共用し、Vocos も含まれます。CPU や Apple Silicon には対応する PyTorch ビルドを使用してください。`device="auto"` は CUDA、MPS、CPU の順に選択します。利用できないデバイスを明示するとエラーになります。MPS の演算子対応と性能は、実際のチェックポイントで検証する必要があります。
+パッケージのインストーラは `requirements.txt` を共用します。Vocos も含まれています。CPU や Apple Silicon では適切な PyTorch ビルドを使用してください。`device="auto"` は CUDA、MPS、CPU の順で選択します。利用できないデバイスを明示するとエラーになります。MPS の演算子対応と性能は、使用するチェックポイントで検証する必要があります。
 
 <a id="prepare-model-files"></a>
 
 ### モデルファイルの準備
 
-このチェックアウトにはモデルのコードと Qwen トークナイザーが含まれますが、**学習済み VoxMel 重み、実験設定、Vocos 重みは含まれません**。互換性のある実験ファイルを用意してください。
+このチェックアウトにはモデルコードと Qwen tokenizer が含まれますが、**学習済み VoxMel の重み、実験設定、Vocos の重みは含まれません**。互換性のある実験ファイルを用意してください。
 
 ```text
 /path/to/experiment/
@@ -126,7 +128,7 @@ model = VoxMel.from_pretrained(
     device="auto",
 )
 
-# 音声継続によるクローニングには参照音声の正確な書き起こしが必要です。
+# 音声継続によるクローニングには、参照音声の正確な書き起こしが必要です。
 wav = model.generate(
     "这是声音克隆的演示。",
     prompt_wav_path="reference.wav",
@@ -138,13 +140,13 @@ wav = model.generate(
 sf.write("clone.wav", wav, model.sample_rate)
 ```
 
-API は推論モードで動作し、モノラルの float32 NumPy 波形を返します。`min_seconds` と `max_seconds` は Coarse-Mel の生成フレーム数の範囲を制御し、実際の長さはモデルの停止予測にも依存します。`cfg_text_strength` と `cfg_spk_strength` はテキストと話者のガイダンス強度をそれぞれ制御し、`up_num_steps` は残差ソルバーのステップ数を指定します。話者ガイダンスは参照音声を指定した場合にのみ適用されます。
+API は推論モードで動作し、モノラルの float32 NumPy 波形を返します。`min_seconds` と `max_seconds` は粗いフレームの生成範囲を制御し、実際の長さはモデルの停止予測にも依存します。`cfg_text_strength` と `cfg_spk_strength` はそれぞれテキストと話者のガイダンスを独立に制御し、`up_num_steps` は残差ソルバーのステップ数を設定します。話者ガイダンスは参照音声がある場合のみ適用されます。
 
 <a id="cli-usage"></a>
 
 ### CLI の使い方
 
-インストール後、リポジトリのルートから実行します。
+インストール後、リポジトリのルートで実行します。
 
 ```bash
 voxmel --model /path/to/experiment \
@@ -156,6 +158,7 @@ voxmel --model /path/to/experiment \
   --cfg-text-strength 3.5 --cfg-spk-strength 3.0 \
   --seed 42 --output out.wav
 
+
 voxmel --help
 ```
 
@@ -163,7 +166,7 @@ voxmel --help
 
 ### Web デモ
 
-オプションの Gradio 依存関係をインストールし、リポジトリのルートから起動します。
+オプションの Gradio 依存関係をインストールし、リポジトリのルートで起動します。
 
 ```bash
 pip install -e ".[web]"
@@ -176,57 +179,55 @@ python app.py \
   --port 8808
 ```
 
-**http://127.0.0.1:8808** を開きます。このデモは音声クローニング専用です。合成したいテキストと、参照音声およびその正確な書き起こしを入力するか、`assets/voice_cloning` に同梱されたローカルのサンプルを選択してください。生成した音声は再生でき、WAV ファイルとしてダウンロードできます。画面には英語と中国語のラベルがあり、ソルバーのステップ数、生成時間の範囲、ガイダンス強度を設定できます。現在の `app.py` では乱数シードは **0** に固定され、結果とともに表示されます。
+**http://127.0.0.1:8808** を開きます。デモは音声クローニング専用です。生成するテキストを入力し、参照音声と正確な書き起こしを両方指定するか、`assets/voice_cloning` に同梱されたローカルのサンプルを選択してください。結果は再生し、WAV としてダウンロードできます。画面には英語と中国語のラベルがあり、生成設定ではソルバーのステップ数、長さの範囲、ガイダンスを指定できます。乱数シードは **42** に固定され、各結果に表示されます。
 
-ローカルモデルは起動時に一度だけ読み込まれ、生成リクエストはキューで1件ずつ処理されます。[モデルファイルの準備](#prepare-model-files)に従って、モデルと Vocos のファイルを用意してください。テキスト CFG と話者 CFG は独立して設定でき、既定値はそれぞれ **3.5** と **3.0** です。Coarse-Mel と残差のソルバーステップ数は、いずれも既定値が **32** です。
+デモは起動時にローカルモデルを一度読み込み、生成リクエストをキューで1件ずつ処理します。モデルと Vocos のファイルは[モデルファイルの準備](#prepare-model-files)に従って用意してください。テキスト CFG と話者 CFG は独立しており、既定値はそれぞれ **3.5** と **3.0** です。粗い成分と残差のソルバーは、どちらも既定で32ステップです。
 
-`--device cpu`、`--device mps`、`--device cuda:0` でデバイスを明示できます。`--checkpoint` で別のチェックポイント名を指定し、`--host 0.0.0.0` で他のマシンからのアクセスを許可できます。全起動オプションは `python app.py --help` を参照してください。
+`--device cpu`、`--device mps`、`--device cuda:0` でデバイスを明示的に選択できます。別のチェックポイント名を指定するには `--checkpoint`、他のマシンからのアクセスを許可するには `--host 0.0.0.0` を使います。すべての起動オプションは `python app.py --help` で確認できます。
+
 
 ---
 
-<a id="models"></a>
+<a id="-models"></a>
 
 ## 📦 モデル
 
-**現在オープンソースとして公開しているモデルサイズは VoxMel-0.6B のみです。** 固定 Haar 分解、フローマッチングヘッド、凍結した24 kHz Vocos ボコーダーを使用します。
+**現在公開されているモデルは VoxMel-0.6B と VoxMel-0.3B です。** 固定 Haar 分解、フローマッチングヘッド、凍結した 24 kHz Vocos ボコーダを使用します。
 
-チェックポイントは Hugging Face の [VoxDance-Lab/VoxMel-0.6B](https://huggingface.co/VoxDance-Lab/VoxMel-0.6B) で公開されています。モデルファイルをダウンロードし、[モデルファイルの準備](#prepare-model-files)に従ってローカル推論を設定してください。
-
+チェックポイントは Hugging Face の [VoxDance-Lab/VoxMel-0.6B](https://huggingface.co/VoxDance-Lab/VoxMel-0.6B) と [VoxDance-Lab/VoxMel-0.3B](https://huggingface.co/VoxDance-Lab/VoxMel-0.3B) から入手できます。モデルファイルをダウンロードし、[モデルファイルの準備](#prepare-model-files)に従ってローカル推論を設定してください。
 
 **強化学習による事後学習（ヘッドを凍結した GRPO）を行ったのは VoxMel-0.6B のみです。VoxMel-0.3B にはこの事後学習を行っていません。**
 
 
 ---
 
-<a id="method"></a>
+<a id="-method"></a>
 
 ## 💡 手法
 
-<a id="motivation"></a>
+### 背景
 
-### 背景と動機
+既存の連続自己回帰型 TTS システムは、高次元の音声生成を扱いやすくするため、学習された音響表現に依存することが一般的です。ニューラル圧縮は自己回帰モデリングを簡単にする一方、表現学習の段階を追加し、復元のボトルネックを生む可能性もあります。
 
-既存の連続自己回帰型 TTS は、高次元音声の生成を扱いやすくするため、学習済み音響表現に依存することが一般的です。ニューラル圧縮は自己回帰モデル化を簡単にする一方、表現学習の段階を追加し、復元のボトルネックになる可能性があります。
+VoxMel は根本的な問いを投げかけます。**高忠実度の連続自己回帰音声生成に、学習による音響圧縮は必要なのでしょうか。**
 
-VoxMel は次の基本的な問いを検討します。**高忠実度の連続自己回帰音声生成に、学習による音響圧縮は必要なのでしょうか。**
-
-私たちはメルスペクトログラムを音響モデルの対象として再検討します。主要な課題は表現そのものよりも、自己回帰予測に向けた音響情報の構成方法にあるという点が重要な観察です。
-
-<a id="generation-pipeline"></a>
+私たちはメルスペクトログラムを音響モデリングの対象として見直します。重要な観察は、主な課題が必ずしも表現そのものではなく、自己回帰予測のために音響情報をどう整理するかにあるということです。
 
 ### 生成パイプライン
 
-1. **メル特徴の分解：** 周波数軸に沿って周波数平均メルと周波数残差に分け、周波数平均メルを時間軸に沿って Coarse-Mel と時間残差に分けます。
-2. **Coarse-Mel の生成：** デコーダーのみの Transformer が、テキスト、参照音声、過去の粗い成分に基づきフローマッチングヘッドを条件付けします。
-3. **時間方向の細部の予測：** 非自己回帰層が Coarse-Mel から時間残差を予測し、時間軸の逆 Haar 変換で周波数平均メルを復元します。
-4. **周波数方向の細部の予測：** 第2層が復元された周波数平均メルから周波数残差を予測し、周波数軸の逆 Haar 変換で完全なメルを復元します。
-5. **波形の合成：** 凍結した Vocos ボコーダーがメル特徴を24 kHz音声に変換します。
+1. **メル特徴量の分解：** 周波数軸で周波数平均メル（Frequency-Averaged Mel）と周波数残差に分け、さらに Frequency-Averaged Mel を時間軸で Coarse-Mel と時間残差に分けます。
+2. **Coarse-Mel の生成：** デコーダのみの transformer がテキスト、参照音声、過去の粗い単位に基づいてフローマッチングヘッドを条件付けします。
+3. **時間方向の詳細の予測：** 非自己回帰階層が Coarse-Mel から時間残差を予測します。時間方向の逆 Haar 変換で Frequency-Averaged Mel を復元します。
+4. **周波数方向の詳細の予測：** 第2の階層が、復元した Frequency-Averaged Mel から周波数残差を予測します。周波数方向の逆 Haar 変換で完全なメルスペクトログラムを復元します。
+5. **波形合成：** 凍結した Vocos ボコーダがメル特徴量を 24 kHz の音声に変換します。
 
-残差層は順番に実行しますが、各層内の位置は非自己回帰的に予測します。どちらの残差も Coarse-Mel の履歴には入りません。論文では24 kHz、100チャネルの対数メル、FFT・窓長1024、ホップ長256サンプルを使用します。フレームレートは完全なメルで93.75 Hz、Coarse-Mel で46.875 Hzです。
+階層は順に実行され、各階層内の位置は非自己回帰的に予測されます。どちらの残差も Coarse-Mel の履歴には入りません。論文では100チャネルの対数メル、1024点の FFT／窓長、256サンプルのホップ、24 kHz のサンプリング周波数を使用します。完全なメルのフレームレートは 93.75 Hz、Coarse-Mel は 46.875 Hz です。
+
+
 
 ---
 
-<a id="evaluation"></a>
+<a id="-evaluation"></a>
 
 ## 📊 評価
 
@@ -234,9 +235,8 @@ VoxMel は次の基本的な問いを検討します。**高忠実度の連続�
 
 ### Seed-TTS-eval の結果
 
-ゼロショット音声クローニングの結果です。WER/CER は百分率で低いほど良く、SIM は話者埋め込みのコサイン類似度で高いほど良い指標です。太字はこの表の各列の最良値、「—」は報告に値の記載がないことを示します。
-
-| モデル | パラメーター数 | 学習時間数 | EN WER ↓ (%) | EN SIM ↑ | ZH CER ↓ (%) | ZH SIM ↑ |
+ゼロショット音声クローニングの結果です。WER/CER は百分率（低いほど良い）、SIM は話者埋め込みのコサイン類似度（高いほど良い）です。太字は各列の最良値を示します。
+| モデル | パラメータ数 | 学習時間 | EN WER ↓ (%) | EN SIM ↑ | ZH CER ↓ (%) | ZH SIM ↑ |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | CosyVoice | 0.3B | 170K | 3.39 | 0.629 | 3.63 | 0.723 |
 | CosyVoice 2 | 0.5B | 167K | 2.57 | 0.652 | 1.45 | 0.748 |
@@ -258,11 +258,11 @@ VoxMel は次の基本的な問いを検討します。**高忠実度の連続�
 | **VoxMel-0.6B** | 0.6B | 100K | 1.51 | 0.738 | 1.29 | 0.755 |
 | **VoxMel-0.6B + GRPO** | 0.6B | 100K | **1.15** | **0.753** | 1.17 | 0.776 |
 
-教師あり VoxMel は、掲載した既存システムの中で英語 WER が最も低く、英語 SIM が最も高い結果です。GRPO により両指標がさらに改善します。
+列挙した既存システムと比べ、教師あり VoxMel モデルは英語 WER が最も低く、英語 SIM が最も高い値を示します。GRPO により両指標がさらに改善します。
 
 <a id="seed-tts-batch-evaluation"></a>
 
-### Seed-TTS バッチ評価
+### Seed-TTS のバッチ評価
 
 ```bash
 cd examples/voxmel
@@ -270,22 +270,104 @@ EXP_DIR=/path/to/experiment VOCOS_PATH=/path/to/vocos-mel-24khz \
 TESTSET=/path/to/seedtts_testset bash infer_seedtts_voxmel.sh
 ```
 
-テストセットには `zh/meta.lst` と `en/meta.lst` があり、各行の形式は `id|参照音声の書き起こし|参照音声パス|対象テキスト` です。音声パスは各言語ディレクトリからの相対パスです。スクリプトは `GPU`、`NPROC`、`MAX_ITEMS`、`COARSE_STEPS`、`UP_STEPS`、CFG の環境変数による上書きに対応し、既存の出力をスキップします。CUDA 以外では `DEVICE=cpu` または `DEVICE=mps` と `NPROC=1` を指定してください。
+テストセットには `zh/meta.lst` と `en/meta.lst` が含まれ、各行の形式は
+`id|prompt transcript|prompt audio path|target text` です。音声パスは各言語ディレクトリからの相対パスです。スクリプトは環境変数による `GPU`、`NPROC`、`MAX_ITEMS`、`COARSE_STEPS`、`UP_STEPS`、CFG の上書きに対応し、既存の出力はスキップします。CUDA を使わない推論では `DEVICE=cpu` または `DEVICE=mps` と `NPROC=1` を指定してください。
+
 
 ---
 
-<a id="license"></a>
+<a id="-community-acknowledgments"></a>
+
+## 🤝 コミュニティへの謝辞
+
+> [!TIP]
+> **Apple Silicon Mac で VoxMel をネイティブ実行**
+>
+> Apple の MLX フレームワークで VoxMel のコミュニティ移植版を開発してくださった [@vanch007](https://github.com/vanch007) に感謝します。BF16、8-bit、4-bit の重みを使ったローカル推論に対応しています。
+>
+> **[mlx-voxmel を見て使い始める →](https://github.com/vanch007/mlx-voxmel)**
+
+
+---
+
+<a id="-license"></a>
 
 ## 📄 ライセンス
 
-VoxMel のコードとモデル重みは [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0) の下で公開されています。サードパーティーのコンポーネントには、それぞれのライセンスが引き続き適用されます。
+VoxMel のコードとモデルの重みは [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0) で公開しています。サードパーティ製コンポーネントには、それぞれのライセンスが引き続き適用されます。
 
 ---
 
 <p align="center">
   開発
   <br><br>
-  <img src="assets/voxdance.png" alt="VoxDance Lab logo" width="96">
+  <img src="assets/voxdance.png" alt="VoxDance Lab ロゴ" width="96">
   <br>
   <b>VoxDance Lab</b>
 </p>
+
+
+
+---
+
+<a id="-Contributors"></a>
+
+## 貢献機関
+
+<p align="center">
+  以下の機関の貢献に深く感謝します。
+</p>
+
+<table align="center">
+  <tr>
+    <td align="center" valign="middle" width="210">
+      <img src="assets/contributors/sii_logo.svg" width="90" alt="SII">
+      <br><sub>上海創智学院</sub>
+    </td>
+    <td align="center" valign="middle" width="210">
+      <img src="assets/contributors/xmu.jpeg" width="90" alt="XMU">
+      <br><sub>厦門大学</sub>
+    </td>
+    <td align="center" valign="middle" width="210">
+      <img src="assets/contributors/sjtu.jpeg" width="90" alt="SJTU">
+      <br><sub>上海交通大学</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" valign="middle">
+      <img src="assets/contributors/fdu.jpeg" width="90" alt="FDU">
+      <br><sub>復旦大学</sub>
+    </td>
+    <td align="center" valign="middle">
+      <img src="assets/contributors/zju.jpeg" width="90" alt="ZJU">
+      <br><sub>浙江大学</sub>
+    </td>
+    <td align="center" valign="middle">
+      <img src="assets/contributors/kyoto.jpeg" width="90" alt="Kyoto">
+      <br><sub>京都大学</sub>
+    </td>
+  </tr>
+</table>
+
+
+---
+
+<a id="-Citation"></a>
+
+## 📖 引用
+
+VoxMel が研究や業務に役立った場合は、技術レポートの引用をご検討ください。
+
+```bibtex
+@misc{guan2026voxmel,
+  title  = {VoxMel TTS Technical Report},
+  author = {Guan, Wenhao and Ye, Jiaxin and Li, Haitao and Duan, Yifan and
+            Liu, Junxi and Zhou, Wangjin and Li, Lin and Hong, Qingyang and Chen, Xie},
+  year   = {2026},
+  eprint        = {2611.20254},
+  archivePrefix = {arXiv},
+  url           = {https://arxiv.org/abs/2611.20254}
+}
+```
+
+
